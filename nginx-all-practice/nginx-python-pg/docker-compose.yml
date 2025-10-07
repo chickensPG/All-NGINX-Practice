@@ -1,0 +1,31 @@
+services:
+  app1:
+    build: ./py
+    environment:
+      APP_NAME: APP 1
+      DB_NAME: csun_nav
+      DB_USER: postgres
+      DB_PASS: 55%+A%)6v86(FRyc9e890
+      DB_HOST: host.docker.internal
+      DB_PORT: 5432
+    restart: on-failure
+  app2:
+    build: ./py
+    environment:
+      APP_NAME: APP 2
+      DB_NAME: csun_nav
+      DB_USER: postgres
+      DB_PASS: 55%+A%)6v86(FRyc9e890 
+      DB_HOST: host.docker.internal
+      DB_PORT: 5432
+    restart: on-failure
+  nginx:
+    image: nginx:latest
+    ports: 
+      - 8080:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app1
+      - app2
+    restart: on-failure

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Analytics Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { text-align: center; }
+    .kpi { display: inline-block; width: 200px; height: 100px; background: #f0f0f0; margin: 10px; text-align: center; border-radius: 10px; padding: 20px; }
+    .charts { display: flex; flex-wrap: wrap; justify-content: space-around; }
+    canvas { background: #fff; border-radius: 10px; margin: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Analytics Dashboard</h1>
+
+  <div class="kpi" id="totalSignups">
+    <h3>Total Signups</h3>
+    <p id="totalValue">0</p>
+  </div>
+
+  <div class="charts">
+    <canvas id="signupChart" width="400" height="300"></canvas>
+    <canvas id="eventChart" width="400" height="300"></canvas>
+  </div>
+
+  <script>
+    // Fetch daily signups
+    fetch("/api/stats/daily_signups")
+      .then(res => res.json())
+      .then(data => {
+        // Total signups KPI
+        const total = data.reduce((sum, d) => sum + d.total_signups, 0);
+        document.getElementById("totalValue").innerText = total;
+
+        // Line chart for daily signups
+        const labels = data.map(d => d.day);
+        const counts = data.map(d => d.total_signups);
+        new Chart(document.getElementById("signupChart"), {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [{
+              label: "Daily Signups",
+              data: counts,
+              borderColor: "blue",
+              fill: false,
+              tension: 0.2
+            }]
+          },
+          options: { responsive: true }
+        });
+
+        // Pie chart for signup proportion (simple demo)
+        new Chart(document.getElementById("eventChart"), {
+          type: "pie",
+          data: {
+            labels: ["Signups", "Other Events"],
+            datasets: [{
+              data: [total, 100 - total], // dummy example for demo
+              backgroundColor: ["#007bff", "#ffc107"]
+            }]
+          },
+          options: { responsive: true }
+        });
+      });
+  </script>
+</body>
+</html>

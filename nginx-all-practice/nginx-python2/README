@@ -1,0 +1,1 @@
+This is a basic NGINX load balancer, using 2 python web servers. Whenever there is a refresh, you can see the App number change. There is also some reverse proxy implentation as well.
